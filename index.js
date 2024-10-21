@@ -19,16 +19,18 @@ async function generateCommitMessageUsingAI(diff) {
       prompt: {
         text: `Please generate a concise and meaningful commit message for the following git diff:\n\n${diff}`
       },
-      model: 'gemini-1.5-flash',
+      model: 'gemini-pro',
     };
 
     // Call the API to get the commit message
     const [response] = await client.generateText(request);
     return response.generated_text;  
+    
   } catch (error) {
     console.error('Error generating commit message with AI:', error);
     return 'AI could not generate a message; using default message: New commit';
   }
+  
 }
 
 // Fetch the latest git diff
@@ -69,6 +71,8 @@ async function main() {
       console.error('Error during git add or commit:', error);
     }
   }
+
+  
   
   // Execute the main function and handle errors
   (async () => {
