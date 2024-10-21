@@ -2,12 +2,11 @@
 
 require('dotenv').config();
 
-
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const simpleGit = require('simple-git');
 const git = simpleGit();
 
-const apiKey = process.env.GEMINI_API_KEY; 
+const apiKey = process.env.GEMINI_API_KEY;
 
 // Initialize the GoogleGenerativeAI
 const client = new GoogleGenerativeAI({
@@ -18,7 +17,7 @@ async function generateCommitMessageUsingAI(diff) {
   try {
     const request = {
       prompt: {
-        text: `Generate a concise commit message for the following git diff:\n\n${diff}`
+        text: `Please generate a concise and meaningful commit message for the following git diff:\n\n${diff}`
       },
       model: 'gemini-1.5-flash',
     };
@@ -28,7 +27,7 @@ async function generateCommitMessageUsingAI(diff) {
     return response.generated_text;  
   } catch (error) {
     console.error('Error generating commit message with AI:', error);
-    return 'New commit';
+    return 'AI could not generate a message; using default message: New commit';
   }
 }
 
@@ -45,18 +44,38 @@ async function getGitDiff() {
 
 // Main function to handle the CLI logic
 async function main() {
-  const diff = await getGitDiff();
-  if (!diff) {
-    console.log('No changes detected in the repository.');
-    return;
+    const diff = await getGitDiff();
+    if (!diff) {
+      console.log('No changes detected in the repository.');
+      return;
+    }
+  
+    const commitMessage = await generateCommitMessageUsingAI(diff);
+    if (!commitMessage) {
+      console.log('Failed to generate a commit message. Aborting commit.');
+      return; 
+    }
+  
+    console.log('Generated Commit Message:', commitMessage);
+  
+    // Optionally, automatically commit the changes
+    try {
+      await git.add('.'); // Stage all changes
+      console.log('Changes staged for commit.');
+  
+      await git.commit(commitMessage); 
+      console.log('Changes committed with message:', commitMessage);
+    } catch (error) {
+      console.error('Error during git add or commit:', error);
+    }
   }
-
-  const commitMessage = await generateCommitMessageUsingAI(diff);
-  console.log('Generated Commit Message:', commitMessage);
-
-  // Optionally, automatically commit the changes
-  await git.add('.');
-  await git.commit(commitMessage);
-}
-
-main();
+  
+  // Execute the main function and handle errors
+  (async () => {
+    try {
+      await main();
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  })();
+  
