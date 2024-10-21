@@ -2,6 +2,16 @@
 
 QuikCommit is a CLI tool that automatically generates git commit messages based on the last file changes using AI (Google Gemini API).
 
+
+### Option 1: Install as an npm package
+
+You can install QuikCommit globally using npm:
+
+```bash
+npm install -g quikcommit
+```
+Then run git add. and git push when commiting changes
+
 ## Installation
 
 1. Clone the repository:

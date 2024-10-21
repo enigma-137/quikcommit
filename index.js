@@ -25,8 +25,11 @@ async function generateCommitMessageUsingAI(diff) {
     const response = await result.response;
     const generatedText = response.text();
 
+    console.log(generatedText.trim())
+
     if (generatedText) {
       return generatedText.trim();
+     
     } else {
       console.error('AI generated an empty response.');
       return 'AI could not generate a message; using default message: New commit';
