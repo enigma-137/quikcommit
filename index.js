@@ -14,24 +14,30 @@ const client = new GoogleGenerativeAI({
 });
 
 async function generateCommitMessageUsingAI(diff) {
-  try {
-    const request = {
-      prompt: {
-        text: `Please generate a concise and meaningful commit message for the following git diff:\n\n${diff}`
-      },
-      model: 'gemini-pro',
-    };
-
-    // Call the API to get the commit message
-    const [response] = await client.generateText(request);
-    return response.generated_text;  
-    
-  } catch (error) {
-    console.error('Error generating commit message with AI:', error);
-    return 'AI could not generate a message; using default message: New commit';
+    try {
+      const request = {
+        prompt: {
+          text: `Please generate a concise and meaningful commit message for the following git diff:\n\n${diff}`
+        },
+        model: 'gemini-1.5-flash',
+      };
+  
+      // Ensure the API call method matches the library's current version
+      const response = await client.generate(request);
+      
+      // Check how the response is structured
+      if (response && response.generated_text) {
+        return response.generated_text;
+      } else {
+        console.error('Unexpected response structure:', response);
+        return 'AI could not generate a message; using default message: New commit';
+      }
+    } catch (error) {
+      console.error('Error generating commit message with AI:', error);
+      return 'AI could not generate a message; using default message: New commit';
+    }
   }
   
-}
 
 // Fetch the latest git diff
 async function getGitDiff() {
