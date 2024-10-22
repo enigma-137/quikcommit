@@ -74,7 +74,7 @@ async function main() {
   }
 }
 
-// Execute the main function and handle errors
+// Execute the main function and handle unknown errors
 (async () => {
   try {
     await main();
