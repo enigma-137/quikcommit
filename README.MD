@@ -1,10 +1,7 @@
-To make your `README.md` more beginner-friendly and provide clear instructions for both users who want to **install and use the package** (as a dependency) and those who want to **clone and run the project**, here's an updated version. This includes explanations for installation, usage, and setup for users coming from npm tutorials.
-
----
 
 # QuikCommit
 
-**QuikCommit** is a command-line tool that automatically generates concise commit messages based on the most recent file changes in a Git repository, with the option to use Google's Generative AI for smarter commit messages.
+**QuikCommit** is a command-line tool that automatically generates concise commit messages based on your git changes. You can use either a default non-AI message or integrate with Google's Generative AI to generate smarter commit messages.
 
 ## Table of Contents
 
@@ -14,7 +11,8 @@ To make your `README.md` more beginner-friendly and provide clear instructions f
   - [Install as a Dependency](#install-as-a-dependency)
   - [Clone the Repository](#clone-the-repository)
 - [Usage](#usage)
-  - [Usage as an npm dependency](#usage-as-an-npm-dependency)
+  - [Without AI Key](#usage-without-ai-key)
+  - [With AI Key](#usage-with-ai-key)
   - [CLI Commands](#cli-commands)
 - [Environment Variables](#environment-variables)
 - [License](#license)
@@ -23,14 +21,14 @@ To make your `README.md` more beginner-friendly and provide clear instructions f
 
 ## Introduction
 
-QuikCommit helps you write meaningful Git commit messages based on the code you’ve changed. You can use the tool for simpler auto-generated messages or leverage Google Generative AI for smarter commit messages using your code diffs.
+QuikCommit streamlines your Git workflow by auto-generating commit messages based on your recent file changes. You can either use a default message or, for more intelligent suggestions, leverage Google's Generative AI.
 
 ## Features
 
-- Auto-generates commit messages based on `git diff`.
-- Can use Google Generative AI to provide intelligent commit messages.
-- Easy to use with just one command.
-- Integrates seamlessly with your Git workflow.
+- Auto-generates commit messages based on the recent git `diff`.
+- Optional integration with Google's Generative AI for smarter, context-aware commit messages.
+- Supports a fallback to non-AI commit messages if no API key is provided.
+- Simple and easy to integrate into your workflow.
 
 ---
 
@@ -38,57 +36,51 @@ QuikCommit helps you write meaningful Git commit messages based on the code you�
 
 ### Install as a Dependency
 
-If you'd like to use **QuikCommit** as a package in your own projects, follow these steps:
-
-1. Install QuikCommit using npm (make sure you have Node.js installed):
+1. **Install globally via npm:**
 
    ```bash
    npm install -g quikcommit
    ```
 
-2. Ensure your Git repository is initialized:
-   
+2. **Initialize a Git repository** (if not already done):
+
    ```bash
    git init
    ```
 
-3. Set up environment variables for using Google's Generative AI API (optional):
-   - Create a `.env` file in your project’s root folder and add your API key:
+3. **Optional**: Add your Google Generative AI API key for smarter commit messages:
+   - Create a `.env` file in your project’s root folder and add:
      ```bash
      GEMINI_API_KEY=your_google_ai_api_key
      ```
 
-4. Now you can run `quikcommit` in your Git repository to auto-generate commit messages!
+4. Run `quikcommit` in your Git repository to auto-generate commit messages.
 
 ### Clone the Repository
 
-Alternatively, if you want to clone the QuikCommit project and run it directly, you can do so:
+Alternatively, you can clone and run the project directly:
 
-1. Clone the repository:
+1. **Clone the repository**:
 
    ```bash
    git clone https://github.com/your-username/quikcommit.git
    ```
 
-2. Navigate to the project directory:
+2. **Navigate to the project directory**:
 
    ```bash
    cd quikcommit
    ```
 
-3. Install dependencies:
+3. **Install dependencies**:
 
    ```bash
    npm install
    ```
 
-4. Set up environment variables by creating a `.env` file in the root folder and adding your Google API key (optional):
+4. **Optional**: Set up the AI API key in a `.env` file as described earlier for smarter commit messages.
 
-   ```bash
-   GEMINI_API_KEY=your_google_ai_api_key
-   ```
-
-5. Now, you can run the script directly:
+5. Run the script:
 
    ```bash
    node index.js
@@ -98,51 +90,63 @@ Alternatively, if you want to clone the QuikCommit project and run it directly, 
 
 ## Usage
 
-### Usage as an npm dependency
+### Without AI Key
 
-After installing QuikCommit globally, you can use it in any Git project with just one command:
+If you do not set an API key, **QuikCommit** will use a fallback commit message. Simply run:
 
 ```bash
 quikcommit
 ```
 
-This command will:
-
+The tool will:
 1. Check for changes using `git diff`.
-2. Automatically generate a commit message based on the detected changes.
-3. Use Google's Generative AI to generate a smarter commit message (if set up with an API key).
-4. Automatically stage and commit your changes using the generated commit message.
+2. Generate a default message like "Changes made" if no AI key is provided.
+3. Stage and commit the changes automatically.
+
+### With AI Key
+
+For AI-powered commit messages, ensure your API key is set in the environment variables:
+
+1. Add your `GEMINI_API_KEY` in a `.env` file.
+2. Run:
+
+   ```bash
+   quikcommit
+   ```
+
+With the API key, QuikCommit will:
+1. Use Google's Generative AI to analyze the `git diff`.
+2. Generate an AI-suggested commit message based on the changes.
+3. Stage and commit the changes with the AI-generated message.
 
 ### CLI Commands
 
-- **Run QuikCommit**: To generate a commit message and commit the changes:
-  
-  ```bash
-  quikcommit
-  ```
+- **Generate Commit and Push Changes**:
 
-- **Check if you're in a Git repository**: If the tool encounters the error `fatal: not a git repository`, ensure you are in a Git-initialized directory by running:
+   ```bash
+   quikcommit
+   ```
 
-  ```bash
-  git init
-  ```
+- If you are not in a Git repository, initialize it first:
+
+   ```bash
+   git init
+   ```
 
 ---
 
 ## Environment Variables
 
-To use QuikCommit with Google Generative AI, you'll need to set up your environment variables:
+If you want AI-generated commit messages, set up your environment variables:
 
-1. Create a `.env` file in the root directory of your project.
-2. Add the following variable:
+1. Create a `.env` file in your project’s root directory.
+2. Add your API key:
 
    ```bash
    GEMINI_API_KEY=your_google_ai_api_key
    ```
 
-3. The `GEMINI_API_KEY` is required to access Google's Generative AI API.
-
-4. Without the API key, the tool will generate a default, non-AI commit message.
+Without this key, QuikCommit will fall back to using default non-AI commit messages.
 
 ---
 
@@ -154,14 +158,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### Summary
 
-For users who are new to npm and want to use **QuikCommit**, the steps are:
-
-1. Install **QuikCommit** globally via npm.
-2. Optionally configure the environment with an API key for AI-powered commit messages.
-3. Run the tool with the `quikcommit` command in any Git repository.
-
-Feel free to fork or contribute to the project!
-
----
-
-This updated `README.md` should guide both npm users and those who want to clone the project, with clear instructions on how to install and use the tool. Let me know if you need further modifications!
+- **Option 1**: Use default commit messages (no API key needed).
+- **Option 2**: Set up a `GEMINI_API_KEY` for AI-powered commit messages.
