@@ -8,16 +8,23 @@ const simpleGit = require('simple-git');
 const git = simpleGit();
 const apiKey = process.env.GEMINI_API_KEY;
 
+let aiEnabled = true;
 if (!apiKey) {
-  console.error('GEMINI_API_KEY is not set in the environment variables.');
-  process.exit(1);
+  console.warn('GEMINI_API_KEY is not set. Falling back to default commit messages.');
+  aiEnabled = false; // Disable AI if no API key is set
 }
 
-// Initialize the GoogleGenerativeAI
-const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+let genAI, model;
+if (aiEnabled) {
+  genAI = new GoogleGenerativeAI(apiKey);
+  model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+}
 
 async function generateCommitMessageUsingAI(diff) {
+  if (!aiEnabled) {
+    return 'Default commit message: Changes made'; // Fallback message
+  }
+
   try {
     const prompt = `Please generate a concise and meaningful commit message for the following git diff:\n\n${diff}`;
 
@@ -25,11 +32,8 @@ async function generateCommitMessageUsingAI(diff) {
     const response = await result.response;
     const generatedText = response.text();
 
-    console.log(generatedText.trim())
-
     if (generatedText) {
       return generatedText.trim();
-     
     } else {
       console.error('AI generated an empty response.');
       return 'AI could not generate a message; using default message: New commit';
@@ -67,7 +71,7 @@ async function main() {
     await git.add('.'); // Stage all changes
     console.log('Changes staged for commit.');
 
-    await git.commit(commitMessage); 
+    await git.commit(commitMessage);
     console.log('Changes committed with message:', commitMessage);
   } catch (error) {
     console.error('Error during git add or commit:', error);
